@@ -28,6 +28,7 @@ if(!myEx){
 				shortCuts[cmd] && shortCuts[cmd]();
 
 				if(e.altKey){
+					console.log(cmd);//---------------------------
 					altShortCuts[cmd] && altShortCuts[cmd]();
 				}
 				if(e.ctlKey){
@@ -46,8 +47,45 @@ if(!myEx){
 			};
 		};
 
+		var fullScreenLrc = function(){
+			var lrcBlock = $("#lrcWrap");
+			var enable = function(){
+				lrcBlock.css({
+					position: "fixed",
+					top: 0,
+					left: 0,
+					width: "100%",
+					height: "100%",
+					backgroundColor: "rgba(255, 255, 255, 1)",
+					fontWeight: "bold",
+					color: "#333",
+					fontSize: "24px",
+					lineHeight: "50px",
+
+					zIndex: 100
+				});
+			};
+
+			var disable = function(){
+				lrcBlock.css({
+					position: "static",
+					color: "#666",
+					fontWeight: "normal",
+					background: "none",
+					fontSize: "12px",
+					lineHeight: "28px"
+				});
+			};
+
+			return {
+				enable: enable,
+				disable: disable
+			};
+		};
+
 		removeAD();
 		setInterval(setTitle, 500);
+		var lrcCtl = fullScreenLrc();
 
 		genShortCuts({
 			altCmds: {
@@ -62,6 +100,14 @@ if(!myEx){
 				// Single - S
 				"83": function(event){
 					$("#playMode").find(".single-mode > a").click();
+				},
+				// LRC FullScreen - +
+				"187": function(event){
+					lrcCtl.enable();
+				},
+				// cancel LRC FullScreen - -
+				"189": function(event){
+					lrcCtl.disable();
 				}
 			}
 		}).enable();
