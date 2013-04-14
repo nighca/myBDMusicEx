@@ -28,7 +28,6 @@ if(!myEx){
 				shortCuts[cmd] && shortCuts[cmd]();
 
 				if(e.altKey){
-					console.log(cmd);//---------------------------
 					altShortCuts[cmd] && altShortCuts[cmd]();
 				}
 				if(e.ctlKey){
@@ -49,37 +48,54 @@ if(!myEx){
 
 		var fullScreenLrc = function(){
 			var lrcBlock = $("#lrcWrap");
-			var enable = function(){
-				lrcBlock.css({
-					position: "fixed",
-					top: 0,
-					left: 0,
-					width: "100%",
-					height: "100%",
-					backgroundColor: "rgba(255, 255, 255, 1)",
-					fontWeight: "bold",
-					color: "#333",
-					fontSize: "24px",
-					lineHeight: "50px",
+			var isEnabled = false;
 
-					zIndex: 100
-				});
+			var enable = function(){
+				if(!isEnabled){
+					lrcBlock.css({
+						position: "fixed",
+						top: 0,
+						left: 0,
+						width: "100%",
+						height: "100%",
+						backgroundColor: "rgba(255, 255, 255, 1)",
+						fontWeight: "bold",
+						color: "#333",
+						fontSize: "24px",
+						lineHeight: "50px",
+
+						zIndex: 100
+					});
+				}
+				isEnabled = true;
 			};
 
 			var disable = function(){
-				lrcBlock.css({
-					position: "static",
-					color: "#666",
-					fontWeight: "normal",
-					background: "none",
-					fontSize: "12px",
-					lineHeight: "28px"
-				});
+				if(isEnabled){
+					lrcBlock.css({
+						position: "static",
+						color: "#666",
+						fontWeight: "normal",
+						background: "none",
+						fontSize: "12px",
+						lineHeight: "28px"
+					});
+				}
+				isEnabled = false;
+			};
+
+			var toggleable = function(){
+				if(isEnabled){
+					disable();
+				}else{
+					enable();
+				}
 			};
 
 			return {
 				enable: enable,
-				disable: disable
+				disable: disable,
+				toggleable: toggleable
 			};
 		};
 
@@ -89,25 +105,31 @@ if(!myEx){
 
 		genShortCuts({
 			altCmds: {
-				// List - L
+				// List - 'L'
 				"76": function(event){
 					$("#playMode").find(".list-mode > a").click();
 				},
-				// Random - R
+				// Random - 'R'
 				"82": function(event){
 					$("#playMode").find(".random-mode > a").click();
 				},
-				// Single - S
+				// Single - 'S'
 				"83": function(event){
 					$("#playMode").find(".single-mode > a").click();
 				},
-				// LRC FullScreen - +
+				// LRC FullScreen - '+'
 				"187": function(event){
 					lrcCtl.enable();
 				},
-				// cancel LRC FullScreen - -
+				// cancel LRC FullScreen - '-'
 				"189": function(event){
 					lrcCtl.disable();
+				}
+			},
+			cmds: {
+				// cancel LRC FullScreen - 'ESC'
+				"27": function(event){
+					lrcCtl.toggleable();
 				}
 			}
 		}).enable();
